@@ -43,7 +43,7 @@ def get_question():
     if len(prev_answers) == 0:  # TODO: Check location for Gatwick
         action = "question"
         id = "q_airport"
-        question = "aaaaYou arrived at London Gatwick Airport. Do you need some assistance?",
+        question = "You arrived at London Gatwick Airport. Do you need some assistance?"
         answers = [{
             "id": "a_airport_hotel_route",
             "answer": "hotel_route",  # Hotel
@@ -66,7 +66,7 @@ def get_question():
         if prev_answers[0]['question_id'] == "q_airport":
             action = "question"
             id = "q_airport_roaming"
-            question = "Roaming charges (CHF):\nTo CH: 2.- per min\nLocal: 1.20 per min\nIncomming: 1.- per min\nSMS: 0.45\nData: 2.- per MB\nActivate Go Europe?",
+            question = "Roaming charges (CHF):\nTo CH: 2.- per min\nLocal: 1.20 per min\nIncomming: 1.- per min\nSMS: 0.45\nData: 2.- per MB\nActivate Go Europe?"
             answers = [{
                 "answer": "yes",
                 "action": "request",
