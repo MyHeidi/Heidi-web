@@ -24,21 +24,29 @@ def update():
         lat = 0
     print("Data: lng: {}, lat: {}".format(lng, lat))
     action = "notification"
-    message = "You arrived in London Heathrow - Need some help?"
-    questions = [
-        {
-            "question": "What type of food?",
-            "answers": [
-                {
-                    "answer": "mexican",
-                    "action": "question",  # question, maps, uber, social, null
-                    "questions": [],
-                    "location": {
-                        "lat": 8.2342,
-                        "lng": 47.323,
-                    }
-                }
-            ]
-        }
-        ]
+    message = "You arrived at London Gatwick Airport"
+    questions = [{
+        "question": "You arrived at London Gatwick Airport. Do you need some assistance?",
+        "answers": [{
+            "answer": "\xF0\x9F\x8F\xA8",  # Hotel
+            # "action": "question",  # question, maps, uber, social, null
+            "questions": [],
+            "location": {
+                "lat": 8.2342,
+                "lng": 47.323,
+            }
+        }, {
+            "answer": "\xE2\x98\x8E",  # Phone
+            "action": "question",  # null
+            "questions": [],
+            "location": {
+                "lat": 8.2342,
+                "lng": 47.323,
+            }
+        }, {
+            "answer": "\xE2\x84\xB9",  # Information source
+            "action": "question",  # question, maps, uber, social, null
+            "questions": [],
+        }]
+    }]
     return jsonify(action=action, message=message, questions=questions)
