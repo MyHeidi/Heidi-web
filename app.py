@@ -15,7 +15,7 @@ def home():
     return "done"
 
 
-@app.route('/update', methods=['POST'])
+@app.route('/update', methods=['GET', 'POST'])
 def update():
     lng = request.data.get('lng')
     lat = request.data.get('lat')
