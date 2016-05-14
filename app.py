@@ -32,7 +32,7 @@ def updateLocation():
 def get_question():
     lng = request.form.get('lng', 0)
     lat = request.form.get('lat', 0)
-    prev_answers = json.loads(request.form.get('prev_answers'))
+    prev_answers = json.loads(request.form.get('prev_answers', '[]'))
 
     print("Data: lng: {}, lat: {}, prev_answers: {}".format(lng, lat, prev_answers))
 
