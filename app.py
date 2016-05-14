@@ -29,24 +29,29 @@ def update():
         "question": "You arrived at London Gatwick Airport. Do you need some assistance?",
         "answers": [{
             "answer": "hotel_route",  # Hotel
-            # "action": "question",  # question, maps, uber, social, null
-            "questions": [],
+            "action": "route",  # question, maps, uber, social, null
             "location": {
-                "lat": 8.2342,
-                "lng": 47.323,
+                "lat": -0.07034167,
+                "lng": 51.510425,
             }
         }, {
             "answer": "phone_charges",  # Phone
             "action": "question",  # null
-            "questions": [],
-            "location": {
-                "lat": 8.2342,
-                "lng": 47.323,
+            "question": {
+                "question": "Roaming charges (CHF):\nTo CH: 2.- per min\nLocal: 1.20 per min\nIncomming: 1.- per min\nSMS: 0.45\nData: 2.- per MB\nActivate Go Europe?",
+                "answers": [{
+                    "answer": "yes",
+                    "action": "request",
+                    "url": "http://dev.heidi.wx.rs/action/phone_charges/go_europe",
+                }, {
+                    "answer": "no",
+                    "action": None,
+                }],
             }
         }, {
-            "answer": "country_info",  # Information source
-            "action": "question",  # question, maps, uber, social, null
-            "questions": [],
-        }]
+            "answer": "country_info",  # Phone
+            "action": "url",  # null
+            "url": "https://en.wikipedia.org/wiki/Gatwick_Airport",
+        }],
     }]
     return jsonify(action=action, message=message, questions=questions)
