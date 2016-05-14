@@ -28,7 +28,7 @@ def update():
     questions = [{
         "question": "You arrived at London Gatwick Airport. Do you need some assistance?",
         "answers": [{
-            "answer": ":hotel: Hotel",  # Hotel
+            "answer": "hotel_route",  # Hotel
             # "action": "question",  # question, maps, uber, social, null
             "questions": [],
             "location": {
@@ -36,7 +36,7 @@ def update():
                 "lng": 47.323,
             }
         }, {
-            "answer": ":phone: Charges",  # Phone
+            "answer": "phone_charges",  # Phone
             "action": "question",  # null
             "questions": [],
             "location": {
@@ -44,7 +44,7 @@ def update():
                 "lng": 47.323,
             }
         }, {
-            "answer": "\U00002139 Info",  # Information source
+            "answer": "country_info",  # Information source
             "action": "question",  # question, maps, uber, social, null
             "questions": [],
         }]
