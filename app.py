@@ -95,7 +95,7 @@ def get_question():
     return jsonify(action=action, id=id, question=question, answers=answers)
 
 
-@app.route('/local/restaurants')
+@app.route('/local/restaurants', methods=['POST'])
 def local_restaurants():
     lng = request.form.get('lng', 0)
     lat = request.form.get('lat', 0)
@@ -108,19 +108,19 @@ def local_restaurants():
     return str(result)
 
 
-@app.route('/local/bars')
+@app.route('/local/bars', methods=['POST'])
 def local_bars():
     lng = request.form.get('lng', 0)
     lat = request.form.get('lat', 0)
 
 
-@app.route('/local/clubs')
+@app.route('/local/clubs', methods=['POST'])
 def local_clubs():
     lng = request.form.get('lng', 0)
     lat = request.form.get('lat', 0)
 
 
-@app.route('/photo')
+@app.route('/photo', methods=['POST'])
 def upload_photo():
     lng = request.form.get('lng', 0)
     lat = request.form.get('lat', 0)
