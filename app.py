@@ -92,7 +92,7 @@ def get_question():
                 'url': 'https://en.wikipedia.org/wiki/Gatwick_Airport',
             }]
         else:
-            dt = datetime.datetime()
+            dt = datetime.datetime.now()
             action = 'question'
             id = 'q_leisure'
             question = "It's {}. What can I help you with?".format(dt.strftime('%H:%M'))
