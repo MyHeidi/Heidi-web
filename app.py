@@ -17,8 +17,12 @@ def home():
 
 @app.route('/update', methods=['GET', 'POST'])
 def update():
-    lng = request.data.get('lng')
-    lat = request.data.get('lat')
+    if request.method == 'POST':
+        lng = request.data.get('lng')
+        lat = request.data.get('lat')
+    else:
+        lng = 0
+        lat = 0
     print("Data: lng: {}, lat: {}".format(lng, lat))
     action = "notification"
     message = "You arrived in London Heathrow - Need some help?"
