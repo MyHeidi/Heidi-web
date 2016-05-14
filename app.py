@@ -1,12 +1,11 @@
 from flask import Flask, request, jsonify
 
 import settings
-from extensions import db, csrf_protect, debug_toolbar
+from extensions import db, debug_toolbar
 
 app = Flask(__name__)
 app.config.from_object(settings)
 db.init_app(app)
-csrf_protect.init_app(app)
 debug_toolbar.init_app(app)
 
 
