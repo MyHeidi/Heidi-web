@@ -14,30 +14,26 @@ def home():
     return "done"
 
 
-@app.route('/update_location', methods=['GET', 'POST'])
+@app.route('/update_location', methods=['POST'])
 def updateLocation():
-    if request.method == 'POST':
-        lng = request.form.get('lng')
-        lat = request.form.get('lat')
-    else:
-        lng = 0
-        lat = 0
+    lng = request.form.get('lng')
+    lat = request.form.get('lat')
+
     print("Data: lng: {}, lat: {}".format(lng, lat))
+
     action = "notification"
     message = "You arrived at London Gatwick Airport"
     return jsonify(action=action, message=message)
 
 
-@app.route('/get_question')
+@app.route('/get_question', methods=['POST'])
 def get_question():
-    if request.method == 'POST':
-        lng = request.form.get('lng', 0)
-        lat = request.form.get('lat', 0)
-        prev_answers = request.form.get('prev_answers')
-    else:
-        lng = 0
-        lat = 0
-        prev_answers = []
+    lng = request.form.get('lng', 0)
+    lat = request.form.get('lat', 0)
+    prev_answers = request.form.get('prev_answers')
+
+    print("Data: lng: {}, lat: {}, prev_answers: {}".format(lng, lat, prev_answers))
+
     action = "question"
     id = "q_airport"
     question = "You arrived at London Gatwick Airport. Do you need some assistance?",
