@@ -17,8 +17,8 @@ def home():
 @app.route('/update', methods=['GET', 'POST'])
 def update():
     if request.method == 'POST':
-        lng = request.data.get('lng')
-        lat = request.data.get('lat')
+        lng = request.form.get('lng')
+        lat = request.form.get('lat')
     else:
         lng = 0
         lat = 0
