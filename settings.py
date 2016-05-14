@@ -8,6 +8,11 @@ DEBUG_TB_ENABLED = False
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+YELP_CONSUMER_KEY = None
+YELP_CONSUMER_SECRET = None
+YELP_TOKEN = None
+YELP_TOKEN_SECRET = None
+
 try:
     from local_settings import *
 except ImportError:

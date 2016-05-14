@@ -1,6 +1,8 @@
 import json
 
 from flask import Flask, request, jsonify
+from yelp.client import Client
+from yelp.oauth1_authenticator import Oauth1Authenticator
 
 import settings
 from extensions import db, debug_toolbar
@@ -9,6 +11,13 @@ app = Flask(__name__)
 app.config.from_object(settings)
 db.init_app(app)
 debug_toolbar.init_app(app)
+
+yelp_client = Client(Oauth1Authenticator(
+    consumer_key=app.config.get('YELP_CONSUMER_KEY'),
+    consumer_secret=app.config.get('YELP_CONSUMER_SECRET'),
+    token=app.config.get('YELP_TOKEN'),
+    token_secret=app.config.get('YELP_TOKEN_SECRET')
+))
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -90,6 +99,13 @@ def get_question():
 def local_restaurants():
     lng = request.form.get('lng', 0)
     lat = request.form.get('lat', 0)
+    params = {
+        'category_filter': 'food',
+        'term': 'italian',
+    }
+    result = yelp_client.search_by_coordinates(lat, lng, **params)
+    print(result)
+    return str(result)
 
 
 @app.route('/local/bars')
