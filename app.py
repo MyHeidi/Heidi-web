@@ -44,7 +44,7 @@ def update():
                 "lng": 47.323,
             }
         }, {
-            "answer": ":info: Info",  # Information source
+            "answer": "\U00002139 Info",  # Information source
             "action": "question",  # question, maps, uber, social, null
             "questions": [],
         }]
