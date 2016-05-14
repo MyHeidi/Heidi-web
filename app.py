@@ -82,6 +82,7 @@ def get_question():
 
     if action is None:
         return jsonify(action=None)
+    print(question)
     return jsonify(action=action, id=id, question=question, answers=answers)
 
 
