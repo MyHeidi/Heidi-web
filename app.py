@@ -43,7 +43,7 @@ def get_question():
     if len(prev_answers) == 0:  # TODO: Check location for Gatwick
         action = "question"
         id = "q_airport"
-        question = "You arrived at London Gatwick Airport. Do you need some assistance?",
+        question = "aaaaYou arrived at London Gatwick Airport. Do you need some assistance?",
         answers = [{
             "id": "a_airport_hotel_route",
             "answer": "hotel_route",  # Hotel
@@ -61,7 +61,7 @@ def get_question():
             "answer": "country_info",  # Phone
             "action": "url",  # null
             "url": "https://en.wikipedia.org/wiki/Gatwick_Airport",
-        }],
+        }]
     elif len(prev_answers) == 1:
         if prev_answers[0]['question_id'] == "q_airport":
             action = "question"
@@ -74,7 +74,7 @@ def get_question():
             }, {
                 "answer": "no",
                 "action": None,
-            }],
+            }]
         else:
             print("Unknown previous question")
     else:
