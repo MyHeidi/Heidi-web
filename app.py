@@ -86,21 +86,24 @@ def get_question():
 
 
 @app.route('/local/restaurants')
-def get_restaurants():
+def local_restaurants():
     lng = request.form.get('lng', 0)
     lat = request.form.get('lat', 0)
 
 
 @app.route('/local/bars')
-def get_restaurants():
-    pass
+def local_bars():
+    lng = request.form.get('lng', 0)
+    lat = request.form.get('lat', 0)
 
 
 @app.route('/local/clubs')
-def get_restaurants():
-    pass
+def local_clubs():
+    lng = request.form.get('lng', 0)
+    lat = request.form.get('lat', 0)
 
 
 @app.route('/photo')
 def upload_photo():
-    pass
+    lng = request.form.get('lng', 0)
+    lat = request.form.get('lat', 0)
