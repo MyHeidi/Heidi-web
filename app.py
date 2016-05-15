@@ -385,6 +385,8 @@ def action_twitter():
         photo_name = request.form.get('photo')
     if photo_name:
         photo_path = os.path.join(app.config.get('UPLOADS_PHOTOS_DEST', ''), photo_name)
+        if not os.path.exists(photo_path):
+            photo_path = None
     else:
         photo_path = None
     if not status:
