@@ -33,17 +33,17 @@ var prependLogItem = function(action, text) {
 
 socket.on('update_location', function(data) {
     console.log('io -> update_location', data);
-    prependLogItem("update_location", "test");
+    prependLogItem("update_location", data);
 });
 
 socket.on('get_question', function(data) {
     console.log('io -> get_question', data);
-    prependLogItem("get_question", "test");
+    prependLogItem("get_question", data);
 });
 
 socket.on('upload_photo', function(data) {
     console.log('io -> upload_photo', data);
-    prependLogItem("upload_photo", "test");
+    prependLogItem("upload_photo", data);
 });
 
 $('.btn-send-get').click(function() {
