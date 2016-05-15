@@ -57,9 +57,9 @@ def home():
     return render_template('home.html')
 
 
-@app.route('/log', methods=['GET', 'POST'])
-def log():
-    return render_template('log.html')
+@app.route('/debug', methods=['GET', 'POST'])
+def debug():
+    return render_template('debug.html')
 
 
 @app.route('/update_location', methods=['POST'])
