@@ -70,6 +70,12 @@ def get_question():
     answers = None
     question_ids = list(map(lambda answer: answer['question_id'], prev_answers))
     answer_ids = list(map(lambda answer: answer['answer_id'], prev_answers))
+    print("REQUEST:")
+    print(prev_answers)
+    print(question_ids)
+    print(answer_ids)
+    print("#" * 80)
+    print()
     if len(question_ids) == 0:
         if lat == 51.153662 and lng == -0.182063:
             action = 'question'
