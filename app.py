@@ -342,7 +342,7 @@ def action_places():
 
 @app.route('/action/phone_charges/<action>', methods=['POST'])
 def action_phone_charges(action):
-    pass  # TODO
+    return jsonify(action='answer', answer="GO Europe activated! New roaming roaming charges:\nTo CH: 1.- per min\nLocal: 0.40 per min\nIncomming: 0.- per min\nSMS: 0.20\nData: 0.10.- per MB with 1000 MB included.")
 
 
 @app.route('/action/twitter', methods=['POST'])
