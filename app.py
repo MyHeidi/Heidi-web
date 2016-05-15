@@ -302,7 +302,7 @@ def ask_question():
         if term.get('weight', 0) < 30:
             break
         term_s = re.sub(r'[^A-Z]', '', term.get('term'))
-        if term_s == "WEATHER" or term_s == "TEMPERATURE":
+        if term_s in ("WEATHER", "TEMPERATURE", "RAIN", "RAINING", "SUNNY", "SUN", "CLOUDS", "CLOUD", "CLOUDY", "COLD"):
             action = 'weather'
         elif term_s in ("RESTAURANT", "RESTAURANTS", "EAT"):
             action = 'restaurants'
@@ -312,9 +312,17 @@ def ask_question():
             action = 'clubs'
         elif term_s in ("ZURICH", "LONDON", "BERN", "BERLIN", "BRIGHTON"):
             data['place'] = term_s.lower()
-    answer = "I'm sorry, I could not understand you."
-    if action == 'weather' and 'place' in data:
-        answer = get_weather_at_place(weather_client, data['place'])
+    answer = random.choice([
+        "I'm sorry, I could not understand you.",
+        "I didn't get that.",
+        "Oops, your request was too complicated to understand.",
+        "Uhm, this is embarrassing, but I couldn't parse your request."
+    ])
+    if action == 'weather':
+        if 'place' in data:
+            answer = get_weather_at_place(weather_client, data['place'])
+        else:
+            answer = get_weather_at_coords(weather_client, lat, lng)
     elif action in ('restaurants', 'bars', 'clubs'):
         pass  # TODO
     return jsonify(action='answer', answer=answer)
