@@ -262,14 +262,14 @@ def upload_photo():
         id = 'q_photo_share_selfie'
         question = "Do you want to share the selfie you took on Twitter?"
         answers = [{
-            'id': 'a_photo_share_selfie_yes',
-            'answer': 'photo_share_selfie_yes',
+            'id': 'a_photo_share_photo_yes',
+            'answer': 'photo_share_photo_yes',
             'action': 'request',
             'url': url_for('action_twitter'),
             'photo': photo_name,
         }, {
-            'id': 'a_photo_share_selfie_no',
-            'answer': 'photo_share_selfie_no',
+            'id': 'a_photo_share_photo_no',
+            'answer': 'photo_share_photo_no',
             'action': None,
         }]
     else:
