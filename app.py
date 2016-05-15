@@ -71,6 +71,8 @@ def get_question():
     question_ids = list(map(lambda answer: answer['question_id'], prev_answers))
     answer_ids = list(map(lambda answer: answer['answer_id'], prev_answers))
     print("REQUEST:")
+    print(lat)
+    print(lng)
     print(prev_answers)
     print(question_ids)
     print(answer_ids)
