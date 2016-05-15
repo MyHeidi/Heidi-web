@@ -66,4 +66,8 @@ target/
 
 # Local settings
 local_settings.py
+secret/
+
+# Project files
+uploads/
 
