@@ -147,7 +147,7 @@ def get_question():
                 'id': 'a_airport_roaming_yes',
                 'answer': 'airport_roaming_yes',
                 'action': 'request',
-                'url': url_for(action_phone_charges),
+                'url': url_for('action_phone_charges'),
             }, {
                 'id': 'a_airport_roaming_no',
                 'answer': 'airport_roaming_no',
@@ -180,17 +180,17 @@ def get_question():
                         'id': 'a_leisure_restaurants_distance_5',
                         'answer': 'leisure_restaurants_distance_5',
                         'action': 'request',
-                        'url': url_for(action_places),
+                        'url': url_for('action_places'),
                     }, {
                         'id': 'a_leisure_restaurants_distance_10',
                         'answer': 'leisure_restaurants_distance_10',
                         'action': 'request',
-                        'url': url_for(action_places),
+                        'url': url_for('action_places'),
                     }, {
                         'id': 'a_leisure_restaurants_distance_30',
                         'answer': 'leisure_restaurants_distance_30',
                         'action': 'request',
-                        'url': url_for(action_places),
+                        'url': url_for('action_places'),
                     }]
                 else:
                     return abort(400, "No more questions to ask for restaurant")
