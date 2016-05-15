@@ -147,7 +147,7 @@ def get_question():
                 'id': 'a_airport_roaming_yes',
                 'answer': 'airport_roaming_yes',
                 'action': 'request',
-                'url': url_for('action_phone_charges'),
+                'url': url_for('action_phone_charges', action='go_europe'),
             }, {
                 'id': 'a_airport_roaming_no',
                 'answer': 'airport_roaming_no',
