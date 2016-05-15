@@ -70,6 +70,7 @@ def update_location():
     results = maps_client.places_nearby((lat, lng), radius=500, type='point_of_interest').get('results', [])
 
     socket_io.emit('update_location', {'lng': lng, 'lat': lat, 'results': results})
+    socket_io.emit('log', {'lng': lng, 'lat': lat, 'results': results})
 
     for result in results:
         if result.get('name') == 'Gatwick Airport':
@@ -86,6 +87,7 @@ def get_question():
     prev_answers = json.loads(request.form.get('prev_answers', '[]'))
 
     socket_io.emit('get_question', {'lng': lng, 'lat': lat, 'prev_answers': prev_answers})
+    socket_io.emit('log', {'lng': lng, 'lat': lat, 'prev_answers': prev_answers})
 
     question_ids = list(map(lambda answer: answer['question_id'], prev_answers))
     answer_ids = list(map(lambda answer: answer['answer_id'], prev_answers))
