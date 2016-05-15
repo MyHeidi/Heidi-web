@@ -366,7 +366,7 @@ def action_twitter():
 
 @app.route('/apn/<notification>')
 def send_apn(notification):
-    payload = Payload(content_available=True)
+    payload = Payload(custom={'notification': notification}, content_available=True)
     # payload_alert = Payload(alert="test")
     results = []
     for token in app.config.get('APN_TOKENS'):

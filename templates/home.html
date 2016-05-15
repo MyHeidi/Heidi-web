@@ -6,7 +6,8 @@
 
 <div class="container">
     <h1>APN</h1>
-    <a href="{{ url_for('send_apn', notification='test') }}" class="btn btn-send-get">Send arrival token</a>
+    <a href="{{ url_for('send_apn', notification='arrival') }}" class="btn btn-send-get">Send arrival APN</a>
+    <a href="{{ url_for('send_apn', notification='photo') }}" class="btn btn-send-get">Send photo APN</a>
     <a href="{{ url_for('get_apn_feedback') }}" class="btn btn-send-get">Get APN feedback</a>
 </div>
 
