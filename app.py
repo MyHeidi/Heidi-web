@@ -250,9 +250,11 @@ def upload_photo():
     photo_name = photos.save(request.files['photo'])
     photo_path = os.path.join(app.config.get('UPLOADS_PHOTOS_DEST', ''), photo_name)
     response = hod_client.post_request({'file': photo_path}, HODApps.DETECT_FACES, async=False)
-    photo_type = None
-    photo_info = None
     face = response.get('face', [])
+
+    socket_io.emit('upload_photo', {'lng': lng, 'lat': lat, 'photo_name': photo_name, 'face': face})
+    socket_io.emit('log', {'lng': lng, 'lat': lat, 'photo_name': photo_name, 'face': face})
+
     action = 'question'
     if face:
         photo_type = 'selfie'

@@ -27,7 +27,8 @@ var prependLogItem = function(action, text) {
     }
 
     var html = $('<strong>').text(action) + text;
-    return $('<ul>').html(html).addClass('list-group-item')
+    var logElement = $('<ul>').html(html).addClass('list-group-item')
+    logList.prepend(logElement);
 };
 
 socket.on('update_location', function(data) {
@@ -38,6 +39,11 @@ socket.on('update_location', function(data) {
 socket.on('get_question', function(data) {
     console.log('io -> get_question', data);
     prependLogItem("get_question", "test");
+});
+
+socket.on('upload_photo', function(data) {
+    console.log('io -> upload_photo', data);
+    prependLogItem("upload_photo", "test");
 });
 
 $('.btn-send-get').click(function() {
