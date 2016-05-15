@@ -79,7 +79,7 @@ def get_question():
     print("#" * 80)
     print()
     if len(question_ids) == 0:
-        if lat == 51.153662 and lng == -0.182063:
+        if lat == '51.153662' and lng == '-0.182063':
             action = 'question'
             id = 'q_airport'
             question = "You arrived at London Gatwick Airport. Do you need some assistance?"
