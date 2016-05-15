@@ -68,7 +68,9 @@ def get_question():
     id = None
     question = None
     answers = None
-    if len(prev_answers) == 0:
+    question_ids = list(map(lambda answer: answer['question_id'], prev_answers))
+    answer_ids = list(map(lambda answer: answer['answer_id'], prev_answers))
+    if len(question_ids) == 0:
         if lat == 51.153662 and lng == -0.182063:
             action = 'question'
             id = 'q_airport'
@@ -109,8 +111,8 @@ def get_question():
                 'answer': 'leisure_clubs',
                 'action': 'question',
             }]
-    elif len(prev_answers) == 1:
-        if prev_answers[0]['question_id'] == 'q_airport':
+    else:
+        if question_ids[0] == 'q_airport':
             action = 'question'
             id = 'q_airport_roaming'
             question = "Roaming charges (CHF):\nTo CH: 2.- per min\nLocal: 1.20 per min\nIncomming: 1.- per min\nSMS: 0.45\nData: 2.- per MB\nActivate Go Europe?"
@@ -124,10 +126,50 @@ def get_question():
                 'answer': 'airport_roaming_no',
                 'action': None,
             }]
+        elif question_ids[0] == 'q_leisure':
+            if answer_ids[0] == 'a_leisure_restaurants':
+                if len(question_ids) == 1:
+                    action = 'question'
+                    id = 'q_leisure_restaurants_cuisine'
+                    question = "What kind of cuisine would you prefer?"
+                    answers = [{
+                        'id': 'a_leisure_restaurants_cuisine_italian',
+                        'answer': 'leisure_restaurants_cuisine_italian',
+                        'action': 'question',
+                    }, {
+                        'id': 'a_leisure_restaurants_cuisine_indian',
+                        'answer': 'leisure_restaurants_cuisine_indian',
+                        'action': 'question',
+                    }, {
+                        'id': 'a_leisure_restaurants_cuisine_fastfood',
+                        'answer': 'leisure_restaurants_cuisine_fastfood',
+                        'action': 'question',
+                    }]
+                elif len(question_ids) == 2:
+                    action = 'question'
+                    id = 'q_leisure_restaurants_distance'
+                    question = "How long do you want to spend to get there?"
+                    answers = [{
+                        'id': 'a_leisure_restaurants_distance_5',
+                        'answer': 'leisure_restaurants_distance_5',
+                        'action': 'request',
+                    }, {
+                        'id': 'a_leisure_restaurants_distance_10',
+                        'answer': 'leisure_restaurants_distance_10',
+                        'action': 'request',
+                    }, {
+                        'id': 'a_leisure_restaurants_distance_30',
+                        'answer': 'leisure_restaurants_distance_30',
+                        'action': 'request',
+                    }]
+            elif answer_ids[0] == 'a_leisure_bars':
+                # TODO
+                pass
+            elif answer_ids[0] == 'a_leisure_clubs':
+                # TODO
+                pass
         else:
             abort(500, "Unknown previous question")
-    else:
-        abort(500, "Unknown previous answers")
     return jsonify(action=action, id=id, question=question, answers=answers)
 
 
