@@ -4,8 +4,10 @@ import os
 import random
 
 import googlemaps
+import pyowm as pyowm
+
 from apns import APNs, Payload
-from flask import Flask, request, jsonify, render_template, abort
+from flask import Flask, request, jsonify, render_template, abort, url_for
 from flask.ext.socketio import SocketIO
 from flask.ext.uploads import configure_uploads
 from havenondemand.hodclient import HODClient, HODApps
@@ -14,7 +16,7 @@ from yelp.oauth1_authenticator import Oauth1Authenticator
 
 import settings
 from extensions import db, debug_toolbar, photos
-from utils import get_lng_lat
+from utils import get_lng_lat, get_weather
 
 app = Flask(__name__)
 app.config.from_object(settings)
@@ -36,6 +38,8 @@ yelp_client = Client(Oauth1Authenticator(
 
 hod_client = HODClient(app.config.get('HOD_API_KEY'), version="v1")
 
+weather_client = pyowm.OWM(app.config.get('OPEN_WEATHER_MAP_API_KEY'))
+
 socket_io = SocketIO(app)
 
 
@@ -52,56 +56,62 @@ def log():
 @app.route('/update_location', methods=['POST'])
 def update_location():
     lng, lat = get_lng_lat()
-    #print(maps_client.places_nearby((-33.86746, 151.207090)))
-    socket_io.emit('log', {'lng': lng, 'lat': lat})
-    action = "notification"
-    message = "You arrived at London Gatwick Airport"
-    return jsonify(action=action, message=message)
+
+    # Get nearby places
+    results = maps_client.places_nearby((lat, lng), radius=500, type='point_of_interest').get('results', [])
+
+    socket_io.emit('update_location', {'lng': lng, 'lat': lat, 'results': results})
+
+    for result in results:
+        if result.get('name') == 'Gatwick Airport':
+            action = "notification"
+            message = "You arrived at London Gatwick Airport"
+            return jsonify(action=action, message=message)
+
+    return jsonify(action=None)
 
 
 @app.route('/get_question', methods=['POST'])
 def get_question():
     lng, lat = get_lng_lat()
     prev_answers = json.loads(request.form.get('prev_answers', '[]'))
-    socket_io.emit('log', {'lng': lng, 'lat': lat, 'prev_answers': prev_answers})
-    action = None
-    id = None
-    question = None
-    answers = None
+
+    socket_io.emit('get_question', {'lng': lng, 'lat': lat, 'prev_answers': prev_answers})
+
     question_ids = list(map(lambda answer: answer['question_id'], prev_answers))
     answer_ids = list(map(lambda answer: answer['answer_id'], prev_answers))
-    print("REQUEST:")
-    print(lat)
-    print(lng)
-    print(prev_answers)
-    print(question_ids)
-    print(answer_ids)
-    print("#" * 80)
-    print()
     if len(question_ids) == 0:
-        if lat == '51.153662' and lng == '-0.182063':
-            action = 'question'
-            id = 'q_airport'
-            question = "You arrived at London Gatwick Airport. Do you need some assistance?"
-            answers = [{
-                'id': 'a_airport_hotel_route',
-                'answer': 'hotel_route',
-                'action': 'route',
-                'location': {
-                    "lng": -0.07034167,
-                    "lat": 51.510425,
-                }
-            }, {
-                'id': 'a_airport_phone_charges',
-                'answer': 'phone_charges',
-                'action': 'question',
-            }, {
-                'id': 'a_airport_country_info',
-                'answer': 'country_info',
-                'action': 'url',
-                'url': 'https://en.wikipedia.org/wiki/Gatwick_Airport',
-            }]
-        else:
+        # Get nearby places
+        results = maps_client.places_nearby((lat, lng), radius=500, type='point_of_interest').get('results', [])
+        action = None
+        for result in results:
+            if result.get('name') == 'Gatwick Airport':
+                action = 'question'
+                id = 'q_airport'
+
+                weather = get_weather(weather_client, lat, lng)
+                question = "You arrived at London Gatwick Airport.{} Do you need some assistance?".format(
+                    " " + weather if weather else ""
+                )
+                answers = [{
+                    'id': 'a_airport_hotel_route',
+                    'answer': 'hotel_route',
+                    'action': 'route',
+                    'location': {
+                        "lng": -0.07034167,
+                        "lat": 51.510425,
+                    }
+                }, {
+                    'id': 'a_airport_phone_charges',
+                    'answer': 'phone_charges',
+                    'action': 'question',
+                }, {
+                    'id': 'a_airport_country_info',
+                    'answer': 'country_info',
+                    'action': 'url',
+                    'url': 'https://en.wikipedia.org/wiki/Gatwick_Airport',
+                }]
+        if action is None:
             dt = datetime.datetime.now()
             action = 'question'
             id = 'q_leisure'
@@ -128,7 +138,7 @@ def get_question():
                 'id': 'a_airport_roaming_yes',
                 'answer': 'airport_roaming_yes',
                 'action': 'request',
-                'url': 'http://dev.heidi.wx.rs/action/phone_charges/go_europe',
+                'url': url_for(action_phone_charges),
             }, {
                 'id': 'a_airport_roaming_no',
                 'answer': 'airport_roaming_no',
@@ -161,23 +171,35 @@ def get_question():
                         'id': 'a_leisure_restaurants_distance_5',
                         'answer': 'leisure_restaurants_distance_5',
                         'action': 'request',
+                        'url': url_for(action_places),
                     }, {
                         'id': 'a_leisure_restaurants_distance_10',
                         'answer': 'leisure_restaurants_distance_10',
                         'action': 'request',
+                        'url': url_for(action_places),
                     }, {
                         'id': 'a_leisure_restaurants_distance_30',
                         'answer': 'leisure_restaurants_distance_30',
                         'action': 'request',
+                        'url': url_for(action_places),
                     }]
+                else:
+                    return abort(400, "No more questions to ask for restaurant")
             elif answer_ids[0] == 'a_leisure_bars':
-                # TODO
+                action = 'question'
+                id = 'q_leisure_restaurants_distance'
+                question = "How long do you want to spend to get there?"
+                answers = None
                 pass
             elif answer_ids[0] == 'a_leisure_clubs':
-                # TODO
-                pass
+                action = 'question'
+                id = 'q_leisure_restaurants_distance'
+                question = "How long do you want to spend to get there?"
+                answers = None
+            else:
+                return abort(500, "Unknown leisure category")
         else:
-            abort(500, "Unknown previous question")
+            return abort(500, "Unknown previous question")
     return jsonify(action=action, id=id, question=question, answers=answers)
 
 
@@ -226,14 +248,69 @@ def upload_photo():
     return jsonify(type=photo_type, info=photo_info, id=None)
 
 
+@app.route('/action/places', methods=['POST'])
+def action_places():
+    lng, lat = get_lng_lat()
+    prev_answers = json.loads(request.form.get('prev_answers', '[]'))
+    socket_io.emit('log', {'lng': lng, 'lat': lat, 'prev_answers': prev_answers})
+
+    question_ids = list(map(lambda answer: answer['question_id'], prev_answers))
+    answer_ids = list(map(lambda answer: answer['answer_id'], prev_answers))
+
+    if len(question_ids) == 3 and question_ids[0] == 'q_leisure' and answer_ids[0] == 'a_leisure_restaurants':
+        # Restaurants
+        category = 'restaurants'
+        term = answer_ids[1].replace('a_leisure_restaurants_cuisine_', '')
+        distance = answer_ids[2].replace('a_leisure_restaurants_distance_', '')
+    elif len(question_ids) == 3:
+        # Bars
+        category = 'bars'
+        distance = '5'
+        term = ''
+    else:
+        return abort(400, "Not enough information to suggest places")
+
+    if distance == '5':
+        radius = 500
+    elif distance == '10':
+        radius = 1000
+    elif distance == '30':
+        radius = 10000
+    else:
+        radius = 40000
+
+    results = yelp_client.search_by_coordinates(lat, lng, radius_filter=radius, category_filter=category, term=term)
+    businesses = filter(lambda b: not b.is_closed, results.businesses)
+    places = []
+    for business in businesses:
+        places.append({
+            'id': business.id,
+            'name': business.name,
+            'image_url': business.image_url,
+            'snippet_text': business.snippet_text,
+            'distance': business.distance,
+            'rating': business.rating,
+            'review_count': business.review_count,
+            'lat': business.location.coordinate.latitude,
+            'lng': business.location.coordinate.longitude,
+            'address': "\n".join(business.location.display_address),
+        })
+    return jsonify(places=places)
+
+
+@app.route('/action/phone_charges/<action>')
+def action_phone_charges(action):
+    pass  # TODO
+
+
 @app.route('/apn/<notification>')
 def send_apn(notification):
     payload = Payload(content_available=True)
-    payload_alert = Payload(alert="test")
+    # payload_alert = Payload(alert="test")
     results = []
     for token in app.config.get('APN_TOKENS'):
         results.append(apn_client.gateway_server.send_notification(token, payload, random.getrandbits(32)))
-        #results.append(apn_client.gateway_server.send_notification(token, payload_alert, random.getrandbits(32)))
+        # results.append(apn_client.gateway_server.send_notification(token, payload_alert, random.getrandbits(32)))
     return jsonify(results=results)
 
 
@@ -243,11 +320,6 @@ def get_apn_feedback():
     for token, fail_time in apn_client.feedback_server.items():
         errors.append({'token': token, 'time': fail_time})
     return repr(errors)
-
-
-@socket_io.on('my event')
-def handle_my_custom_event(data):
-    print('received json: ' + str(data))
 
 
 if __name__ == '__main__':

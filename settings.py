@@ -31,6 +31,8 @@ YELP_TOKEN_SECRET = None
 
 HOD_API_KEY = None
 
+OPEN_WEATHER_MAP_API_KEY = None
+
 try:
     from local_settings import *
 except ImportError:

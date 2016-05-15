@@ -1,6 +1,7 @@
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 socket.on('connect', function() {
-    socket.emit('my event', {data: 'I\'m connected!'});
+    //socket.emit('my event', {data: 'I\'m connected!'});
+    console.log("Established socket.io connection");
 });
 
 var logList = $('#log-list');
@@ -11,7 +12,7 @@ socket.on('log', function(data) {
     if (logList.length == 0) {
         return;
     }
-    
+
     var item = $('<ul>');
     item.text(data);
     item.addClass('list-group-item');
