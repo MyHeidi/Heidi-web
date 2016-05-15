@@ -26,8 +26,8 @@ var prependLogItem = function(action, text) {
         return;
     }
 
-    var html = $('<strong>').text(action) + text;
-    var logElement = $('<ul>').html(html).addClass('list-group-item')
+    var html = '<strong>' + action + '</strong> ' + text;
+    var logElement = $('<ul>').html(html).addClass('list-group-item');
     logList.prepend(logElement);
 };
 
