@@ -349,10 +349,15 @@ def action_phone_charges(action):
 def action_twitter():
     lng, lat = get_lng_lat()
     status = request.form.get('status')
+    if 'photo' in request.files:
+        photo_name = photos.save(request.files['photo'])
+        photo_path = os.path.join(app.config.get('UPLOADS_PHOTOS_DEST', ''), photo_name)
+    else:
+        photo_path = None
     if not status:
         abort(400, "Missing field: status")
     try:
-        twitter_client.PostUpdate(status, latitude=lat, longitude=lng, display_coordinates=True)
+        twitter_client.PostUpdate(status, media=photo_path, latitude=lat, longitude=lng, display_coordinates=True)
         answer = "Tweeted!"
     except twitter.error.TwitterError as e:
         answer = "Could not post tweet! The API gave me this error message: \"{}\"!".format(e.message)
