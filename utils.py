@@ -14,6 +14,8 @@ def get_weather_answer(observation):
     if observation:
         weather = observation.get_weather()
         if weather:
+            status = weather.get_status().lower().replace(
+                'clouds', 'cloudy').replace('rain', 'rainy').replace('sun', 'sunny')
             temperature = weather.get_temperature('celsius')
             temperature_min = int(temperature['temp_min'])
             temperature_max = int(temperature['temp_max'])
@@ -21,7 +23,7 @@ def get_weather_answer(observation):
                 temperature_s = "{} to {} °C".format(temperature_min, temperature_max)
             else:
                 temperature_s = str(temperature_max)
-            return "It's currently {} at around {} °C.".format(weather.get_status().lower(), temperature_s)
+            return "It's currently {} at around {} °C.".format(status, temperature_s)
     return None
 
 
