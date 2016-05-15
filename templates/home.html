@@ -128,6 +128,29 @@
 </div>
 
 <div class="container">
+    <h1>Twitter file name</h1>
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('action_twitter') }}">
+        <div class="form-group">
+            <label for="lng">Longitude</label>
+            <input type="text" class="form-control" id="lng" name="lng" value="-0.0878222">
+        </div>
+        <div class="form-group">
+            <label for="lat">Latitude</label>
+            <input type="text" class="form-control" id="lat" name="lat" value="51.5226651">
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <input type="text" class="form-control" id="status" name="status" value="Having a good time at AngelHack London! #AH9 #AngelHackLondon">
+        </div>
+        <div class="form-group">
+            <label for="photo">Photo</label>
+            <input type="text" id="photo" name="photo" value="tweet.jpeg">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+</div>
+
+<div class="container">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h1 class="panel-title">Log</h1>

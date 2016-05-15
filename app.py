@@ -251,10 +251,40 @@ def upload_photo():
     photo_type = None
     photo_info = None
     face = response.get('face', [])
+    action = 'question'
     if face:
         photo_type = 'selfie'
         photo_info = {'face': face}
-    return jsonify(type=photo_type, info=photo_info, id=None)
+        id = 'q_photo_share_selfie'
+        question = "Do you want to share the selfie you took on Twitter?"
+        answers = [{
+            'id': 'a_photo_share_selfie_yes',
+            'answer': 'photo_share_selfie_yes',
+            'action': 'request',
+            'url': url_for('action_twitter'),
+            'photo': photo_name,
+        }, {
+            'id': 'a_photo_share_selfie_no',
+            'answer': 'photo_share_selfie_no',
+            'action': None,
+        }]
+    else:
+        photo_type = 'photo'
+        photo_info = {}
+        id = 'q_photo_share_photo'
+        question = "Would you like to share this photo on Twitter?"
+        answers = [{
+            'id': 'a_photo_share_photo_yes',
+            'answer': 'photo_share_photo_yes',
+            'action': 'request',
+            'url': url_for('action_twitter'),
+            'photo': photo_name,
+        }, {
+            'id': 'a_photo_share_photo_no',
+            'answer': 'photo_share_photo_no',
+            'action': None,
+        }]
+    return jsonify(action=action, id=id, question=question, answers=answers, type=photo_type, info=photo_info)
 
 
 @app.route('/ask_question', methods=['POST'])
@@ -351,6 +381,9 @@ def action_twitter():
     status = request.form.get('status')
     if 'photo' in request.files:
         photo_name = photos.save(request.files['photo'])
+    else:
+        photo_name = request.form.get('photo')
+    if photo_name:
         photo_path = os.path.join(app.config.get('UPLOADS_PHOTOS_DEST', ''), photo_name)
     else:
         photo_path = None
