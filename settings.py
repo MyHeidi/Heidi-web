@@ -33,6 +33,11 @@ HOD_API_KEY = None
 
 OPEN_WEATHER_MAP_API_KEY = None
 
+TWITTER_CONSUMER_KEY = None
+TWITTER_CONSUMER_SECRET = None
+TWITTER_TOKEN = None
+TWITTER_TOKEN_SECRET = None
+
 try:
     from local_settings import *
 except ImportError:

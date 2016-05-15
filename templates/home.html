@@ -83,6 +83,43 @@
     </form>
 </div>
 
+<div class="container">
+    <h1>Ask Question</h1>
+    <form method="post" action="{{ url_for('ask_question') }}">
+        <div class="form-group">
+            <label for="lng">Longitude</label>
+            <input type="text" class="form-control" id="lng" name="lng" value="-0.0878222">
+        </div>
+        <div class="form-group">
+            <label for="lat">Latitude</label>
+            <input type="text" class="form-control" id="lat" name="lat" value="51.5226651">
+        </div>
+        <div class="form-group">
+            <label for="question">Question</label>
+            <input type="text" class="form-control" id="question" name="question" value="What's the weather like in Zurich?">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+</div>
+
+<div class="container">
+    <h1>Twitter</h1>
+    <form method="post" action="{{ url_for('action_twitter') }}">
+        <div class="form-group">
+            <label for="lng">Longitude</label>
+            <input type="text" class="form-control" id="lng" name="lng" value="-0.0878222">
+        </div>
+        <div class="form-group">
+            <label for="lat">Latitude</label>
+            <input type="text" class="form-control" id="lat" name="lat" value="51.5226651">
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <input type="text" class="form-control" id="status" name="status" value="Having a good time at AngelHack London! #AH9 #AngelHackLondon">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+</div>
 
 <div class="container">
     <div class="panel panel-default">

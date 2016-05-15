@@ -5,6 +5,9 @@ import random
 
 import googlemaps
 import pyowm as pyowm
+import re
+
+import twitter
 
 from apns import APNs, Payload
 from flask import Flask, request, jsonify, render_template, abort, url_for
@@ -16,7 +19,7 @@ from yelp.oauth1_authenticator import Oauth1Authenticator
 
 import settings
 from extensions import db, debug_toolbar, photos
-from utils import get_lng_lat, get_weather
+from utils import get_lng_lat, get_weather_at_coords, get_weather_at_place
 
 app = Flask(__name__)
 app.config.from_object(settings)
@@ -39,6 +42,12 @@ yelp_client = Client(Oauth1Authenticator(
 hod_client = HODClient(app.config.get('HOD_API_KEY'), version="v1")
 
 weather_client = pyowm.OWM(app.config.get('OPEN_WEATHER_MAP_API_KEY'))
+
+twitter_client = twitter.Api(
+    consumer_key=app.config.get('TWITTER_CONSUMER_KEY'),
+    consumer_secret=app.config.get('TWITTER_CONSUMER_SECRET'),
+    access_token_key=app.config.get('TWITTER_TOKEN'),
+    access_token_secret=app.config.get('TWITTER_TOKEN_SECRET'))
 
 socket_io = SocketIO(app)
 
@@ -89,7 +98,7 @@ def get_question():
                 action = 'question'
                 id = 'q_airport'
 
-                weather = get_weather(weather_client, lat, lng)
+                weather = get_weather_at_coords(weather_client, lat, lng)
                 question = "You arrived at London Gatwick Airport.{} Do you need some assistance?".format(
                     " " + weather if weather else ""
                 )
@@ -248,6 +257,39 @@ def upload_photo():
     return jsonify(type=photo_type, info=photo_info, id=None)
 
 
+@app.route('/ask_question', methods=['POST'])
+def ask_question():
+    lng, lat = get_lng_lat()
+    question = request.form.get('question')
+    if not question:
+        abort(400, "Missing field: question")
+    response = hod_client.post_request({'text': question, 'stemming': False}, HODApps.TOKENIZE_TEXT, async=False)
+    terms = response.get('terms')
+    action = None
+
+    data = {}
+    for term in terms:
+        if term.get('weight', 0) < 30:
+            break
+        term_s = re.sub(r'[^A-Z]', '', term.get('term'))
+        if term_s == "WEATHER" or term_s == "TEMPERATURE":
+            action = 'weather'
+        elif term_s in ("RESTAURANT", "RESTAURANTS", "EAT"):
+            action = 'restaurants'
+        elif term_s in ("BAR", "BARS", "DRINK", "DRINKS", "PUB", "PUBS", "DRUNK", "SMASHED"):
+            action = 'bars'
+        elif term_s in ("CLUB", "CLUBS", "PARTY", "PARTIES"):
+            action = 'clubs'
+        elif term_s in ("ZURICH", "LONDON", "BERN", "BERLIN", "BRIGHTON"):
+            data['place'] = term_s.lower()
+    answer = "I'm sorry, I could not understand you."
+    if action == 'weather' and 'place' in data:
+        answer = get_weather_at_place(weather_client, data['place'])
+    elif action in ('restaurants', 'bars', 'clubs'):
+        pass  # TODO
+    return jsonify(action='answer', answer=answer)
+
+
 @app.route('/action/places', methods=['POST'])
 def action_places():
     lng, lat = get_lng_lat()
@@ -298,9 +340,23 @@ def action_places():
     return jsonify(places=places)
 
 
-@app.route('/action/phone_charges/<action>')
+@app.route('/action/phone_charges/<action>', methods=['POST'])
 def action_phone_charges(action):
     pass  # TODO
+
+
+@app.route('/action/twitter', methods=['POST'])
+def action_twitter():
+    lng, lat = get_lng_lat()
+    status = request.form.get('status')
+    if not status:
+        abort(400, "Missing field: status")
+    try:
+        twitter_client.PostUpdate(status, latitude=lat, longitude=lng, display_coordinates=True)
+        answer = "Tweeted!"
+    except twitter.error.TwitterError as e:
+        answer = "Could not post tweet! The API gave me this error message: \"{}\"!".format(e.message)
+    return jsonify(action='answer', answer=answer)
 
 
 @app.route('/apn/<notification>')
